@@ -38,6 +38,7 @@ class LoginForm extends Component{
     }
     handleLogin=(e)=>{
         e.preventDefault()
+        //收集表单数据
         const {validateFields} = this.props.form
         const dataArr = []
         validateFields((err,value)=>{
@@ -59,6 +60,7 @@ class LoginForm extends Component{
                         getFieldDecorator('userName',{
                             initialValue:'admin',//设置默认值
                             rules:[
+                                //声明式验证
                                 {required:true,message:'用户名不能为空'},
                                 {min:4,message:""}
                                 ]
@@ -71,6 +73,7 @@ class LoginForm extends Component{
                 <Form.Item>
                     {
                         getFieldDecorator('password',{
+                            //编程式验证，自己写验证的条件
                             rules:[{validator:this.checkPassword}]
                         })(
                             <Input placeholder="密码" prefix={<Icon type="safety"/>}/>
