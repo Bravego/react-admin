@@ -1,5 +1,11 @@
 import React, {Component} from 'react'
 import {Form,Icon,Input,Button} from 'antd'
+import PropTypes from 'prop-types'
+
+import {reqLogin} from '../../api'
+import storageUser from '../../utils/storageUtils'
+import MemoryUser from '../../utils/MemoryUtils'
+
 
 import logo from '../../asset/images/logo.png'
 import './index.less'
@@ -7,7 +13,34 @@ import './index.less'
 login组件
  */
 export default class Login extends Component {
+    state = {
+        errorMsg:''
+    }
+    login = async (username,password)=>{
+        //发送请求
+        const result = await reqLogin(username,password)
+        console.log(result.status)
+        //判断是否请求成功
+        if(result.status === 0){
+            //保存用户
+            const user = result.data
+            storageUser.saveUser(user)
+            MemoryUser.user = user
+
+            //跳转到admin界面
+            this.props.history.replace('/')
+        }else{
+
+            //更新状态，提示错误信息
+            this.setState({
+                errorMsg:result.msg
+            })
+
+        }
+
+    }
     render() {
+        const {errorMsg} = this.state
         return (
             <div className="login">
                 <div className="login-header">
@@ -16,8 +49,13 @@ export default class Login extends Component {
                 </div>
                 <div className="login-content">
                     <div className="login-box">
+                        <div className="error-msg-wrap">
+                            <div className={errorMsg ? "show" : ""}>
+                                {errorMsg}
+                            </div>
+                        </div>
                         <div className="title">用户管理系统</div>
-                        <LoginForm/>
+                        <LoginForm login={this.login}/>
                     </div>
                 </div>
             </div>
@@ -25,6 +63,10 @@ export default class Login extends Component {
     }
 }
 class LoginForm extends Component{
+    //声明
+    static propTypes = {
+        login:PropTypes.func.isRequired
+    }
     //编程式验证
     checkPassword=(rule,value,callback)=>{
         if(!value){
@@ -37,16 +79,17 @@ class LoginForm extends Component{
     }
     handleLogin=(e)=>{
         const {validateFields,resetFields}=this.props.form
-        const dataArr = []
+        const login = this.props.login
 
         e.preventDefault()
-        validateFields((err,value)=>{
+        validateFields(async (err,value)=>{
             if(!err){
-                dataArr.push(value.userName,value.password)
-                alert(dataArr.join())
-                resetFields()
+               //获取用户输入的信息
+                const {username,password}=value
+                //console.log(username,password)
+               //调用login函数
+                login(username,password)
             }else{
-                alert('用户名或密码错误')
                 resetFields()
             }
         })
@@ -57,7 +100,7 @@ class LoginForm extends Component{
         return <Form className="login-form">
             <Form.Item>
                 {
-                    getFieldDecorator('userName',{
+                    getFieldDecorator('username',{
                         initialValue:'admin',
                         rules:[
                             {required:true,message:'请输入用户名'},

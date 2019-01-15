@@ -9,14 +9,12 @@ import Admin from './pages/admin/admin'
 export default class App extends Component {
     render() {
         return (
-            <div>
                 <BrowserRouter>
                     <Switch>
                         <Route path='/login' component={Login}/>
                         <Route path='/' component={Admin}/>
                     </Switch>
                 </BrowserRouter>
-            </div>
         )
     }
 }
