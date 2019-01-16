@@ -33,11 +33,7 @@ const menuList = [
     icon: 'safety',
   },
 
-  {
-    title: '订单管理',
-    key: '/order',
-    icon: 'safety',
-  },
+
   {
     title: '图形图表',
     key: '/charts',

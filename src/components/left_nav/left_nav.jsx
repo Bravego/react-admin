@@ -40,7 +40,6 @@ class LeftNav extends Component {
 
     componentWillMount(){
         this.menuNodes = this.getMenus(menuList)
-        console.log(this.menuNodes)
     }
 
 
